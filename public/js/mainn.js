@@ -94,6 +94,7 @@
         document.getElementById("drawButton").classList.add("opened");
         removeSelectedClass("draw");
         document.getElementById("drawButton").classList.add("selected");
+        
       }
 
       maincolor.addEventListener("input", function () {
@@ -247,7 +248,7 @@
           const maxFileSize = 1 * 1024 * 1024;
       
           if (file.size > maxFileSize) {
-            alert('The selected image is too large. Please choose an image smaller than 5MB.');
+            toast("The selected image is too large. Please choose an image og maximu size 1MB.");
             return;
           }
       
@@ -306,25 +307,6 @@
       
       //*********************************************************************** Canvas listeners
 
-      function sendTo() {
-        if (!isReceiving) {
-          console.log("change");
-          var json = JSON.stringify(canvas.toJSON());
-          console.log(json);
-          socket.emit("change", json);
-        }
-      }
-      
-
-      function receiveFrom(msg) {
-        console.log("change");
-        isReceiving = true;
-      
-        canvas.loadFromJSON(msg, function () {
-          canvas.renderAll();
-          isReceiving = false;
-        });
-      }
       
 
       canvas.on("object:added", function (event) {
@@ -332,7 +314,6 @@
         if (!isReceiving) {
           let obj = event.target;
           obj.id = generateId();
-          //console.log(JSON.stringify(obj.toJSON()));
           socket.emit("add", obj.id, JSON.stringify(obj.toJSON()));
         }
       });
@@ -600,10 +581,10 @@
             loginForm_email.value = "";
             loginForm_password.value = "";
           } else {
-            alert("Please enter a valid email.");
+            toast("Please enter a valid email.");
           }
         } else {
-          alert("Please enter both email and password.");
+          toast("Please enter both email and password.");
         }
       });
 
@@ -630,16 +611,16 @@
                 let json = JSON.stringify(registrationData);
                 socket.emit("register", json);
               } else {
-                alert("Password must be at least 6 characters long.");
+                toast("Password must be at least 6 characters long.");
               }
             } else {
-              alert("Passwords do not match. Please re-enter your password.");
+              toast("Passwords do not match. Please re-enter your password.");
             }
           } else {
-            alert("Please enter a valid email.");
+            toast("Please enter a valid email.");
           }
         } else {
-          alert("Please fill in all the fields.");
+          toast("Please fill in all the fields.");
         }
       });
       
@@ -661,23 +642,18 @@
             recoveryForm_second.style.display= "flex";
 
           } else {
-            alert("Please enter a valid email.");
+            toast("Please enter a valid email.");
           }
         } else {
-          alert("Please enter your email.");
+          toast("Please enter your email.");
         }
 
       });
 
-      // socket.on('code_send', function(message) {
-      //   let codediv = document.getElementById("recoveryForm_second")
-      //   codediv.style.display =  "block";
-      //   console.log(message);
-      // });
+      
 
       socket.on('change_confirmed', function(message) {
-       console.log(message);
-       alert("Spravne zmenene heslo");
+       toast("Password has been changed.");
        recoveryForm.style.display="flex";
        recoveryForm_second.style.display= "none";
        recoveryForm_code.value = "";
@@ -687,13 +663,12 @@
       });
 
       socket.on('change_denied', function(message) {
-       console.log(message);
-       alert("Zmena neprebehla spravne");
+       toast("No user found with this email and reset code.");
       });
 
       
       socket.on('dbresult', function(message) {
-        console.log(message);
+        toast(message);
       });
       
 
@@ -704,9 +679,9 @@
         const passwordAgain = document.getElementById("sub_recoveryForm_password_again");
 
         if (password.value !== passwordAgain.value) {
-            alert("Passwords do not match");
+            toast("Passwords do not match");
         } else if (password.value.length < 6) {
-            alert("Password must be longer than 6 characters");
+            toast("Password must be longer than 6 characters");
         } else {
           let recoveryData = {
             email: email,
@@ -725,7 +700,7 @@
         let email =  document.getElementById("registerForm_code_email");
         let codeinput = document.getElementById("registerForm_code");
         if (!isValidEmail(email.value.trim())) {
-          console.log("Invalid email");
+          toast("Invalid email");
           return;
         }
 
@@ -742,6 +717,7 @@
       }
 
       socket.on('active_code_send', function(message) {
+        toast("Activation code has been send to your email");
         changeCurrent('activate');
       });
 
@@ -750,19 +726,16 @@
 
 
       if (localStorage.getItem('login_code') !== null) {
-        console.log("Sending code to check");
         socket.emit("islogged", localStorage.getItem('login_code'));
       } 
 
       socket.on('user_is_logged', function(message) {
-        console.log("User is logged");
-        console.log(message);
         loginprivilege();
       });
 
 
       socket.on('user_is_not_logged', function(message) {
-        console.log("User is not Logged In");
+        //console.log("User is not Logged In");
         if (localStorage.getItem('login_code') !== null) {
           localStorage.removeItem("login_code");
         } 
@@ -770,8 +743,6 @@
 
 
       socket.on('succesfulllogin', function(message) {
-        console.log("Login was a succes");
-        console.log(message);
         localStorage.setItem("login_code", message);
         loginprivilege();
         closeMainModal();
@@ -804,7 +775,6 @@
       
 
       logoutButton.addEventListener("click", function () {
-        console.log("Log out");
         looseloginprivilege();
         socket.emit("logout", localStorage.getItem('login_code'));
         localStorage.removeItem("login_code");
@@ -831,7 +801,6 @@
         canvasIDs.forEach((canvas) => {
           receivedCanvasIDs.push(canvas);
         });
-        console.log('Received canvas IDs:', receivedCanvasIDs);
         displayCanvasIDs(receivedCanvasIDs);
       });
       
@@ -839,7 +808,7 @@
       function addNewCanvas() {
         const canvasName = document.getElementById('form4_canvas_name').value;
         if (canvasName.trim() === '') {
-          alert('Please enter a name for the new canvas.');
+          toast('Please enter a name for the new canvas.');
           return;
         }
       
@@ -923,3 +892,14 @@
       isReceiving = false;
     });
 
+
+
+    function toast(message, duration = 3000) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+    
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, duration);
+    }

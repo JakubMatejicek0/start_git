@@ -348,7 +348,7 @@ io.on('connection', function (socket) {
                 console.error(err.message);
               } else {
                 socket.emit('active_code_send','Code has been sent');
-                socket.emit('dbresult', 'User registered successfully.');
+                //socket.emit('dbresult', 'User registered successfully.');
                 sendEmail(email, 'Account activation', `Your activation code is: ${active_code}`);
               }
               connection.end();
@@ -410,7 +410,7 @@ io.on('connection', function (socket) {
                 console.error(err.message);
               } else {
                 socket.emit('code_send','Code has been sent');
-                socket.emit('dbresult', 'User found. Password recovery initiated.');
+                //socket.emit('dbresult', 'User found. Password recovery initiated.');
                 sendEmail(email, 'Password recovery', `Your password reset code is: ${reset_code}`);
               }
               connection.end();

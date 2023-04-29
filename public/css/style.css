@@ -554,3 +554,25 @@ input[type=range]:focus::-ms-fill-upper {
   background-color: white;
    */
 }
+
+
+#toast {
+  visibility: hidden;
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  background-color: #00A499;
+  color: #fff;
+  padding: 16px;
+  border-radius: 4px;
+  font-size: 18px;
+  opacity: 0;
+  transition: opacity 0.5s, visibility 0.5s;
+  z-index: 101;
+}
+
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+}
