@@ -97,19 +97,18 @@
 
     <hr style="width: 100%; height: 2px;">
 
-    <button class="theBtn casualclass" id="loginButton">
+    <button class="theBtn casualclass" id="openMainModalButton">
       <svg>
         <image xlink:href="./assets/user.svg" />
       </svg>
     </button>
-
-    <button class="theBtn" id="loadSaveButton">
+    <button class="theBtn loginclass" id="loadSaveButton" style="display: none;">
       <svg>
         <image xlink:href="./assets/cloud.svg" />
       </svg>
     </button>
 
-    <button class="theBtn" id="logoutButton">
+    <button class="theBtn loginclass" id="logoutButton" style="display: none;">
       <svg>
         <image xlink:href="./assets/logout.svg" />
       </svg>
@@ -119,7 +118,7 @@
 
 
 
-  <div id="myModal" class="modal">
+  <div id="theModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <span class="close">&times;</span>
@@ -141,54 +140,119 @@
 
 
 
-  <div id="loginWindow" class="casualclass">
-    <h1>Welcome</h1>
-    <div id="form_container">
-
-      <div id="form1" class="info" style="display: block;">
-        Email: <input id="form1_email" type="text" name="email" /><br />
-        Password: <input id="form1_password" type="password" name="password" /><br />
-        <input type="submit" id="sub_form1" name="sub_form1" value="Submit" />
+  <div id="mainModalDiv" class="mainModal">
+    <div class="mainModal-content">
+      <div class="mainModalHeader" id="mainModalHeader">
+        <div onclick="changeCurrent('login')" id="selectLogin" class="activated">Login</div>
+        <div onclick="changeCurrent('register')" id="selectRegister">Register</div>
+        <div onclick="changeCurrent('activate')" id="selectActivate">Activate</div>
+        <div onclick="changeCurrent('forgot')" id="selectForgot">Forgot</div>
       </div>
+      <div class="mainModalBody" id="mainModalBody">
 
+        <div id="loginForm" class="loginForm form current">
+          <div class="inputs">
+            <div>
+              <label for="loginForm_email">Email:</label>
+              <input id="loginForm_email" type="text" name="email" />
+            </div>
+            <div>
+              <label for="loginForm_password">Password:</label>
+              <input id="loginForm_password" type="password" name="password" />
+            </div>
+          </div>
+          <div class="buttonDiv">
+            <input type="submit" id="sub_loginForm" name="sub_loginForm" value="Submit" />
+          </div>
+        </div>
 
-      <div id="form2" class="info" style="display: none;">
-        Email: <input id="form2_email" type="text" name="email" /><br />
-        Password: <input id="form2_password" type="password" name="password" /><br />
-        Confirm Password: <input id="form2_password_again" type="password" name="confirm_password" /><br />
-        <input type="submit" id="sub_form2" name="sub_form2" value="Submit" />
-      </div>
+        <div id="registerForm" class="registerForm form">
+          <div class="inputs">
+            <div>
+              <label for="registerForm_email">Email:</label>
+              <input id="registerForm_email" type="text" name="email" />
+            </div>
+            <div>
+              <label for="registerForm_password">Password:</label>
+              <input id="registerForm_password" type="password" name="password" />
+            </div>
+            <div>
+              <label for="registerForm_password_again">Confirm Password:</label>
+              <input id="registerForm_password_again" type="password" name="confirm_password" />
+            </div>
+          </div>
+          <div class="buttonDiv">
+            <input type="submit" id="sub_registerForm" name="sub_registerForm" value="Submit" />
+          </div>
+        </div>
 
-      <button id="log_sign_btn">Sign Up / Log In</button>
+        <div id="activateForm" class="activateForm form">
+          <h2>Put code that has been send to you</h2>
+          <div class="inputs">
+            <div>
+              <label for="registerForm_code_email">Email:</label>
+              <input id="registerForm_code_email" type="text" name="email" />
+            </div>
+            <div>
+              <label for="registerForm_code">Received code:</label>
+              <input id="registerForm_code" type="text" name="code" />
+            </div>
+          </div>
+          <div class="buttonDiv">
+            <button onclick="checkCode()">Submit</button>
+          </div>
+        </div>
 
-      <button id="forgot">Forgot the Password?</button>
-      <button id="activateaccount">Activate the acoound</button>
-
-      <div id="form2_aftersubmit" style="display: none;">
-        <h2>Put code that has been send has been send</h2>
-        Email: <input id="form2_code_email" type="text" name="email" /><br />
-        Enter received code: <input id="form2_code" type="text" name="code" /><br />
-        <button onclick="checkCode()">Submit</button>
-      </div>
-
-      <div id="form3" class="info" style="display: none;">
-        Email: <input id="form3_email" type="text" name="email" /><br />
-        <input type="submit" id="sub_form3" name="sub_form3" value="Submit" />
-      </div>
-      <div id="form3_aftersubmit" style="display: none;">
-        <h2>Email with Recovery code has been send</h2>
-        Enter received code: <input id="form3_code" type="text" name="code" /><br />
-        Enter your new password:<input type="password" id="sub_form3_password" placeholder="Enter password">
-        Enter your new password again:<input type="password" id="sub_form3_password_again"
-          placeholder="Enter password again">
-        <button onclick="checkPasswords()">Submit</button>
+        <div id="recoveryMain" class="recoveryMain form">
+          <div id="recoveryForm" class="recoveryForm">
+            <div class="inputs">
+              <div>
+                <label for="recoveryForm_email">Email:</label>
+                <input id="recoveryForm_email" type="text" name="email" />
+              </div>
+            </div>
+            <div class="buttonDiv">
+              <input type="submit" id="sub_recoveryForm" name="sub_recoveryForm" value="Submit" />
+            </div>
+          </div>
+          <div id="recoveryForm_second" class="recoveryForm_second">
+            <h2>Email with Recovery code has been send</h2>
+            <div class="inputs">
+              <div>
+                <label for="recoveryForm_code">Received code:</label>
+                <input id="recoveryForm_code" type="text" name="code" />
+              </div>
+              <div>
+                <label for="sub_recoveryForm_password">Your new password:</label>
+                <input type="password" id="sub_recoveryForm_password">
+              </div>
+              <div>
+                <label for="sub_recoveryForm_password_again">Repeat new password:</label>
+                <input type="password" id="sub_recoveryForm_password_again">
+              </div>
+            </div>
+            <div class="buttonDiv">
+              <button onclick="checkPasswords()">Submit</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <button id="continuse_casual_btn">Continue casual</button>
+
   </div>
 
-  <button id="log_out_btn" class="loginclass"> LogOut </button>
-  <button id="sql_load_save_btn" class="loginclass"> Load/Save </button>
+
+
+
+
+
+
+
+
+
+
+
+
   <div id="form4">
     <div id="addnewCanvas">
       Add new Canvas: <input type="text" id="form4_canvas_name">

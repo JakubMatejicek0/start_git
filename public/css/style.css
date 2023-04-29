@@ -6,6 +6,8 @@ body {
   font-family: sans-serif;
 }
 
+
+
 /* CUSTOM INPUT RANGE */
 
 input[type=range] {
@@ -218,6 +220,8 @@ input[type=range]:focus::-ms-fill-upper {
 
 
 
+
+
 /* CANVAS MODALS */
 
 .modal {
@@ -375,23 +379,23 @@ input[type=range]:focus::-ms-fill-upper {
 } */
 
 /* 
-#loginButton {
+#openMainModalButton {
   position: absolute;
   top: 75px;
   right: 0px;
 } */
 
-#log_out_btn {
+/* #logoutButton {
   position: absolute;
   top: 75px;
   left: 100px;
 }
 
-#sql_load_save_btn {
+#loadSaveButton {
   position: absolute;
   top: 75px;
   left: 200px;
-}
+} */
 
 #form4
 {
@@ -410,8 +414,134 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 
-#loginWindow {
-  position: absolute;
+/* MAIN MODAL */
+
+.mainModal {
+  display: none;
+  position: fixed; 
+  z-index: 100; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+  background-color: rgba(0,0,0,0.4); 
+}
+
+.mainModal.shown{
+  display: block;
+}
+
+.mainModal-content {
+  margin-top: -10px;
+  background-color: #fefefe;
+  margin: 7% auto;
+  border: none;
+  width: 40%;
+  height: 50%;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.mainModal .mainModalHeader{
+  display: flex;
+  justify-content: center;
+}
+.mainModal .mainModalHeader > div{
+  user-select:none;
+  font-size: 1.5rem;
+  height: 4rem;
+  width: 100%;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.mainModal .mainModalHeader > div.activated{
+  background-color: #00A499;
+  color: white;
+}
+
+.mainModalBody{
+  padding: 20px 10%;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.mainModalBody .form{
+  display: none;
+}
+
+.mainModalBody .form.current{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.mainModalBody .inputs{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-block: 1.4rem;
+}
+.mainModalBody .inputs >div{
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.mainModalBody .inputs label{
+  font-size: 1.3rem;
+}
+.mainModalBody .inputs input, .mainModalBody .inputs input:focus{
+  font-size: 1rem;
+  outline:none!important;
+  border: none;
+  border-bottom: 1px black solid;
+  width: 48%;
+}
+
+.mainModalBody .buttonDiv{
+  width: 80%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.mainModalBody .buttonDiv input, .mainModalBody .buttonDiv button {
+  cursor: pointer;
+  background-color: #00a499;
+  color: white;
+  border-radius: 10px;
+  padding: 7px 18px;
+  border: none;
+  font-size: 1.1rem;
+}
+.mainModalBody .buttonDiv input:hover, .mainModalBody .buttonDiv button:hover{
+  background-color: #1e2838;
+}
+
+.mainModalBody .recoveryMain > div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.mainModalBody .recoveryMain .recoveryForm_second{
+  display: none;
+}
+
+
+
+/* MAIN MODAL */
+
+#mainModalDiv {
+  /* position: absolute;
   left: 50%;
   top: 20%;
   transform: translate(-50%);
@@ -422,23 +552,5 @@ input[type=range]:focus::-ms-fill-upper {
     rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
   background-color: white;
-  
-}
-
-.info {
-  border: 2px solid black;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
-  text-align: center;
-  margin: 5px;
-  padding: 5px;
-}
-
-.loginclass
-{
-  display: none;
-}
-
-.casualclass
-{
-  display: block;
+   */
 }

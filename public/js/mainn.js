@@ -390,18 +390,23 @@
 
       /* CANVAS MODALS */
 
-      var modal = document.getElementById("myModal");
+      var canvasModal = document.getElementById("theModal");
+      var mainModal = document.getElementById("mainModalDiv");
+
+      window.onclick = function(event) {
+        if (event.target == canvasModal) {
+          closeModal();
+        }
+        if (event.target == mainModal) {
+          closeMainModal();
+        }
+      }
+
       var span = document.getElementsByClassName("close")[0];
       document.getElementById("cancelButton").addEventListener("click", tryCloseModal);
 
       span.onclick = function() {
         closeModal();
-      }
-
-      window.onclick = function(event) {
-        if (event.target == modal) {
-          closeModal();
-        }
       }
 
       function tryCloseModal(){
@@ -412,7 +417,7 @@
         closeModal();
       }
       function closeModal(){
-        modal.style.display = "none";
+        canvasModal.style.display = "none";
       }
 
       document.getElementById("resetButton").addEventListener("click", showResetModal);
@@ -424,7 +429,7 @@
 
 
       function showResetModal() {
-        modal.style.display = "block";
+        canvasModal.style.display = "block";
         modalBody.setAttribute("data-action", "reset");
         mainTitleSpan.innerHTML = "Do you really wish to reset your Whiteboard?";
         littleTitleSpan.innerHTML = "All data will be pernamently lost";
@@ -433,7 +438,7 @@
       }
 
       function showLockModal() {
-        modal.style.display = "block";
+        canvasModal.style.display = "block";
         modalBody.setAttribute("data-action", "lock");
         confirmButton.innerHTML = "Confirm";
         cancelButton.innerHTML = "Cancel";
@@ -448,7 +453,7 @@
       }
 
       function showExportModal(){
-        modal.style.display = "block";
+        canvasModal.style.display = "block";
         mainTitleSpan.innerHTML = "Export your Whiteboard";
         littleTitleSpan.innerHTML = "Choose from formats below";
         confirmButton.innerHTML = "JPG";
@@ -519,43 +524,69 @@
       /* CANVAS MODALS */
 
 
-      /* LOGIN MODAL */
+      /* MAIN MODAL */
       
-      document.getElementById("loginButton").addEventListener("click", makeLogin);
+      document.getElementById("openMainModalButton").addEventListener("click", openMainModal);
+
       
-      //login fucntions
-      function makeLogin() {
-        const loginObject = document.getElementById("loginWindow");
-        loginObject.style.display = loginObject.style.display === "none" ? "block" : "none";
+  
+      function openMainModal() {
+        changeCurrent("login");
+        mainModalDiv.classList.add("shown");
+      }
+
+      function closeMainModal(){
+        recoveryForm.style.display="flex";
+        recoveryForm_second.style.display= "none";
+        mainModalDiv.classList.remove("shown");
       }
       
-      /* LOGIN MODAL */
+      
+
+      function changeCurrent(name){
+        const children = mainModalBody.children;
+        const childrenHeader = mainModalHeader.children;
+        for (let i = 0; i < children.length; i++) {
+          children[i].classList.remove('current');
+          childrenHeader[i].classList.remove('activated');
+        }
+        if(name == "login"){
+          loginForm.classList.add('current');
+          selectLogin.classList.add('activated');
+        }
+        if(name == "register"){
+          registerForm.classList.add('current');
+          selectRegister.classList.add('activated');
+        }
+        if(name == "activate"){
+          activateForm.classList.add('current');
+          selectActivate.classList.add('activated');
+        }
+        if(name == "forgot"){
+          recoveryMain.classList.add('current');
+          selectForgot.classList.add('activated');
+        }
+      }
+
+
+      
+      /*  MAIN MODAL */
       
       //*********************************************************************** Helping Functions
 
-      let login_btn = document.getElementById("log_sign_btn");
-      let forgot = document.getElementById("forgot");
-      let form1 = document.getElementById("form1");
-      let form2 = document.getElementById("form2");
-      let form3 = document.getElementById("form3");
+      let loginForm = document.getElementById("loginForm");
+      let registerForm = document.getElementById("registerForm");
+      let recoveryForm = document.getElementById("recoveryForm");
 
-      login_btn.addEventListener("click", function () {
-        form1.style.display = form1.style.display === "none" ? "block" : "none";
-        form2.style.display = form2.style.display === "block" ? "none" : "block";
-      });
-
-      forgot.addEventListener("click", function () {
-        form3.style.display = form3.style.display === "none" ? "block" : "none";
-      }); 
 
       function isValidEmail(email) {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return re.test(email);
       }
       
-      sub_form1.addEventListener("click", function () {
-        let email = document.getElementById("form1_email");
-        let password = document.getElementById("form1_password");
+      sub_loginForm.addEventListener("click", function () {
+        let email = document.getElementById("loginForm_email");
+        let password = document.getElementById("loginForm_password");
       
         if (email.value.trim() !== "" && password.value.trim() !== "") {
           if (isValidEmail(email.value.trim())) {
@@ -566,6 +597,8 @@
       
             let json = JSON.stringify(loginData);
             socket.emit("login", json);
+            loginForm_email.value = "";
+            loginForm_password.value = "";
           } else {
             alert("Please enter a valid email.");
           }
@@ -574,10 +607,10 @@
         }
       });
 
-      sub_form2.addEventListener("click", function () {
-        let email = document.getElementById("form2_email");
-        let password = document.getElementById("form2_password");
-        let password_again = document.getElementById("form2_password_again");
+      sub_registerForm.addEventListener("click", function () {
+        let email = document.getElementById("registerForm_email");
+        let password = document.getElementById("registerForm_password");
+        let password_again = document.getElementById("registerForm_password_again");
 
         
       
@@ -590,9 +623,9 @@
                   password: password.value.trim()
                 };
 
-                document.getElementById("form2_email").value = "";
-                document.getElementById("form2_password").value = "";
-                document.getElementById("form2_password_again").value = "";
+                document.getElementById("registerForm_email").value = "";
+                document.getElementById("registerForm_password").value = "";
+                document.getElementById("registerForm_password_again").value = "";
               
                 let json = JSON.stringify(registrationData);
                 socket.emit("register", json);
@@ -611,8 +644,8 @@
       });
       
       let tmpemail = "";
-      sub_form3.addEventListener("click", function () {
-        let email = document.getElementById("form3_email");
+      sub_recoveryForm.addEventListener("click", function () {
+        let email = document.getElementById("recoveryForm_email");
       
         if (email.value.trim() !== "") {
           if (isValidEmail(email.value.trim())) {
@@ -620,9 +653,13 @@
               email: email.value.trim(),
             };
             tmpemail = email.value.trim();
-            document.getElementById("form3_email").value = "";
+            document.getElementById("recoveryForm_email").value = "";
             let json = JSON.stringify(recoveryData);
             socket.emit("recover_password", json);
+
+            recoveryForm.style.display="none";
+            recoveryForm_second.style.display= "flex";
+
           } else {
             alert("Please enter a valid email.");
           }
@@ -631,6 +668,29 @@
         }
 
       });
+
+      // socket.on('code_send', function(message) {
+      //   let codediv = document.getElementById("recoveryForm_second")
+      //   codediv.style.display =  "block";
+      //   console.log(message);
+      // });
+
+      socket.on('change_confirmed', function(message) {
+       console.log(message);
+       alert("Spravne zmenene heslo");
+       recoveryForm.style.display="flex";
+       recoveryForm_second.style.display= "none";
+       recoveryForm_code.value = "";
+       sub_recoveryForm_password.value = "";
+       sub_recoveryForm_password_again.value = "";
+       changeCurrent("login");
+      });
+
+      socket.on('change_denied', function(message) {
+       console.log(message);
+       alert("Zmena neprebehla spravne");
+      });
+
       
       socket.on('dbresult', function(message) {
         console.log(message);
@@ -639,9 +699,9 @@
 
       function checkPasswords() {
         let email = tmpemail;
-        let codeinput = document.getElementById("form3_code");
-        const password = document.getElementById("sub_form3_password");
-        const passwordAgain = document.getElementById("sub_form3_password_again");
+        let codeinput = document.getElementById("recoveryForm_code");
+        const password = document.getElementById("sub_recoveryForm_password");
+        const passwordAgain = document.getElementById("sub_recoveryForm_password_again");
 
         if (password.value !== passwordAgain.value) {
             alert("Passwords do not match");
@@ -659,21 +719,11 @@
         }
       }
 
-      socket.on('code_send', function(message) {
-        let codediv = document.getElementById("form3_aftersubmit")
-        codediv.style.display =  "block";
-        console.log(message);
-      });
-
-      socket.on('change_confirmed', function(message) {
-       let codediv = document.getElementById("form3_aftersubmit")
-       codediv.style.display =  "none";
-       console.log(message);
-      });
+     
      
       function checkCode() {
-        let email =  document.getElementById("form2_code_email");
-        let codeinput = document.getElementById("form2_code");
+        let email =  document.getElementById("registerForm_code_email");
+        let codeinput = document.getElementById("registerForm_code");
         if (!isValidEmail(email.value.trim())) {
           console.log("Invalid email");
           return;
@@ -683,25 +733,16 @@
           email: email.value.trim(),
           codeinput: codeinput.value.trim()
         };
-        document.getElementById("form2_code_email").value = "";
-        document.getElementById("form2_code").value = "";
+        document.getElementById("registerForm_code_email").value = "";
+        document.getElementById("registerForm_code").value = "";
   
         let json = JSON.stringify(activateData);
         socket.emit("activated_account", json);
         
       }
 
-      activateaccount.addEventListener("click", function () {
-        let activatefrom = document.getElementById("form2_aftersubmit")
-        activatefrom.style.display = activatefrom.style.display === "none" ? "block" : "none";
-      });
-      
-      socket.on('dbresult', function(message) {
-        console.log(message);
-      });
-      
       socket.on('active_code_send', function(message) {
-        console.log(message);
+        changeCurrent('activate');
       });
 
       
@@ -712,7 +753,6 @@
         console.log("Sending code to check");
         socket.emit("islogged", localStorage.getItem('login_code'));
       } 
-
 
       socket.on('user_is_logged', function(message) {
         console.log("User is logged");
@@ -734,6 +774,7 @@
         console.log(message);
         localStorage.setItem("login_code", message);
         loginprivilege();
+        closeMainModal();
       });
 
       function loginprivilege() {
@@ -762,17 +803,12 @@
       }
       
 
-      log_out_btn.addEventListener("click", function () {
+      logoutButton.addEventListener("click", function () {
         console.log("Log out");
         looseloginprivilege();
         socket.emit("logout", localStorage.getItem('login_code'));
         localStorage.removeItem("login_code");
       });
-
-      continuse_casual_btn.addEventListener("click", function () {
-        let loginwindow = document.getElementById("loginWindow");
-        loginwindow.style.display = "none";
-      });     
   
 
 
@@ -782,7 +818,7 @@
         form4.style.display = "none";
       }
 
-      sql_load_save_btn.addEventListener("click", function () {
+      loadSaveButton.addEventListener("click", function () {
         let form4 = document.getElementById("form4");
         form4.style.display = "block";
         socket.emit('getCanvasIDs', localStorage.getItem('login_code'));
@@ -887,8 +923,3 @@
       isReceiving = false;
     });
 
-
-
-    //odstranit nakoniec
-    let loginwindow = document.getElementById("loginWindow");
-    loginwindow.style.display = "none";
