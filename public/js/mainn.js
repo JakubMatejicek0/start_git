@@ -1,7 +1,7 @@
 
       
 
-      //socket
+      // socket
       var socket = io();
       var isReceiving = false;
 
