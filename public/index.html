@@ -1,100 +1,187 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Canvas and Buttons</title>
-    <!-- Import the Fabric.js library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
-    <link rel="stylesheet" href="css/style.css">
-  </head>
-  <body>
-   
-    <canvas id="canvas"></canvas>
-    
-    <button id="drawButton">Draw</button>
-    <button id="moveButton">Move</button>
-    <button id="delButton">Del</button>
-    <button id="jpgButton">JPG</button>
-    <button id="pngButton">PNG</button>
 
-    <input type="range" id="drawRange" min="2" max="50" step="2" value="2">
+<head>
+  <meta charset="utf-8" />
+  <title>Virtual Whiteboard</title>
+  <!-- Import the Fabric.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
 
-    <button id="resetButton">Reset</button>
-    <button id="imgButton"> IMG </button>
-    <button id="textButton"> TEXT </button>
-    
-    <button id="lockButton"> LOCK </button>
+<body>
 
-    
-    <input id="maincolor" type="color" name="" >
-    <button id="colorForBackground">Background</button>
-    <button id="colorForPencil">Pencil</button>
-   
+  <canvas id="canvas"></canvas>
 
+  <div class="deleteDiv" id="deleteButtonDiv">
+    <button class="theDelBtn" id="delButton">
+      <svg>
+        <image xlink:href="./assets/delete.svg" />
+      </svg>
+    </button>
+  </div>
+  <div class="leftBar" id="leftBar">
+    <button class="theBtn icon " id="moveButton">
+      <svg>
+        <image xlink:href="./assets/move.svg" />
+      </svg>
+    </button>
 
-    <button id="loginButton" class="casualclass">Login</button>
-    
-    <div id="loginWindow"  class="casualclass">
-      <h1>Welcome</h1>
-      <div id="form_container">
-
-        <div id="form1" class="info" style="display: block;">
-          Email: <input  id="form1_email"  type="text" name="email" /><br />
-          Password: <input  id="form1_password" type="password" name="password" /><br />
-          <input type="submit" id="sub_form1" name="sub_form1" value="Submit" />
+    <button class="theBtn icon drawBtn selected" id="drawButton">
+      <svg>
+        <image xlink:href="./assets/draw.svg" />
+      </svg>
+      <div class="drawChange">
+        <div class="penStroke">
+          <input type="range" id="drawRange" min="2" max="50" step="2" value="2">
         </div>
-
-
-        <div id="form2" class="info" style="display: none;">
-          Email: <input id="form2_email"  type="text" name="email" /><br />
-          Password: <input id="form2_password"  type="password" name="password" /><br />
-          Confirm Password: <input id="form2_password_again"  type="password" name="confirm_password" /><br />
-          <input type="submit" id="sub_form2" name="sub_form2" value="Submit" />
+        <div class="defColors">
+          <input type="button" onclick="setPenColor('#000000')" style="background-color: #000000;">
+          <input type="button" onclick="setPenColor('#0000FF')" style="background-color: #0000FF;">
+          <input type="button" onclick="setPenColor('#008000')" style="background-color: #008000;">
+          <input type="button" onclick="setPenColor('#FF0000')" style="background-color: #FF0000;">
+          <input type="button" onclick="setPenColor('#FFFFFF')" style="background-color: #FFFFFF;">
         </div>
-
-        <button id="log_sign_btn">Sign Up / Log In</button>
-
-        <button id="forgot">Forgot the Password?</button>
-        <button id="activateaccount">Activate the acoound</button>
-
-        <div id="form2_aftersubmit" style="display: none;">
-          <h2>Put code that has been send has been send</h2>
-          Email: <input id="form2_code_email"  type="text" name="email" /><br />
-          Enter received code: <input id="form2_code"  type="text" name="code" /><br />
-          <button onclick="checkCode()">Submit</button>
-        </div>
-
-        <div id="form3" class="info" style="display: none;">
-          Email: <input id="form3_email"  type="text" name="email" /><br />
-          <input type="submit" id="sub_form3" name="sub_form3" value="Submit" />
-        </div>
-        <div id="form3_aftersubmit" style="display: none;">
-          <h2>Email with Recovery code has been send</h2>
-          Enter received code: <input id="form3_code"  type="text" name="code" /><br />
-          Enter your new password:<input type="password" id="sub_form3_password" placeholder="Enter password">
-          Enter your new password again:<input type="password" id="sub_form3_password_again" placeholder="Enter password again">
-          <button onclick="checkPasswords()">Submit</button>
+        <div class="colorPicker">
+          <input id="maincolor" type="color">
         </div>
       </div>
-      <button id="continuse_casual_btn">Continue casual</button>
+    </button>
+
+    <button class="theBtn icon" id="imgButton">
+      <svg>
+        <image xlink:href="./assets/image.svg" />
+      </svg>
+    </button>
+    <button class="theBtn icon" id="textButton">
+      <svg>
+        <image xlink:href="./assets/text.svg" />
+      </svg>
+    </button>
+
+    <button class="theBtn icon backgroundBtn" id="bgButton">
+      <svg>
+        <image xlink:href="./assets/drop.svg" />
+      </svg>
+      <div class="bgChange">
+        <div class="defColors">
+          <input type="button" onclick="setBgColor('#000000')" style="background-color: #000000;">
+          <input type="button" onclick="setBgColor('#C0C0C0')" style="background-color: #C0C0C0;">
+          <input type="button" onclick="setBgColor('#FFFFFF')" style="background-color: #FFFFFF;">
+        </div>
+        <div class="colorPicker">
+          <input id="bgcolor" type="color">
+        </div>
+      </div>
+    </button>
+
+    <hr style="width: 100%; height: 2px;">
+    <button class=" theBtn icon" id="resetButton">
+      <svg>
+        <image xlink:href="./assets/reset.svg" />
+      </svg>
+    </button>
+
+    <button class="theBtn icon" id="lockButton" data-value="unlock">
+      <svg>
+        <image xlink:href="./assets/unlock.svg" />
+      </svg>
+    </button>
+
+  </div>
+
+
+  <button class="theBtn" id="jpgButton">JPG</button>
+  <button class="theBtn" id="pngButton">PNG</button>
+
+  <button id="loginButton" class="casualclass">Login</button>
+
+  <!-- The modal -->
+  <div id="myModal" class="modal" style="display: block;">
+    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="close">&times;</span>
+      </div>
+      <div class="modalReset">
+        <div>
+          <span class="mainTitle">Do you really wish to reset your Whiteboard?</span>
+          <span class="littleTitle">All data will be pernamently lost</span>
+        </div>
+        <div class="buttons">
+          <button>Cancel</button>
+
+          <button>Confirm</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <button id="log_out_btn" class="loginclass"> LogOut </button>
-    <button id="sql_load_save_btn" class="loginclass"> Load/Save </button>
-    <div id="form4">
-      <div id="addnewCanvas">
-        Add new Canvas: <input type="text" id="form4_canvas_name">
-        <button onclick="addNewCanvas()">Submit</button>
+
+
+
+  <div id="loginWindow" class="casualclass">
+    <h1>Welcome</h1>
+    <div id="form_container">
+
+      <div id="form1" class="info" style="display: block;">
+        Email: <input id="form1_email" type="text" name="email" /><br />
+        Password: <input id="form1_password" type="password" name="password" /><br />
+        <input type="submit" id="sub_form1" name="sub_form1" value="Submit" />
       </div>
-      <div id="all_canvases">
-          
+
+
+      <div id="form2" class="info" style="display: none;">
+        Email: <input id="form2_email" type="text" name="email" /><br />
+        Password: <input id="form2_password" type="password" name="password" /><br />
+        Confirm Password: <input id="form2_password_again" type="password" name="confirm_password" /><br />
+        <input type="submit" id="sub_form2" name="sub_form2" value="Submit" />
       </div>
-      <button onclick="ContinueToDraw()">Continue to draw</button>
+
+      <button id="log_sign_btn">Sign Up / Log In</button>
+
+      <button id="forgot">Forgot the Password?</button>
+      <button id="activateaccount">Activate the acoound</button>
+
+      <div id="form2_aftersubmit" style="display: none;">
+        <h2>Put code that has been send has been send</h2>
+        Email: <input id="form2_code_email" type="text" name="email" /><br />
+        Enter received code: <input id="form2_code" type="text" name="code" /><br />
+        <button onclick="checkCode()">Submit</button>
+      </div>
+
+      <div id="form3" class="info" style="display: none;">
+        Email: <input id="form3_email" type="text" name="email" /><br />
+        <input type="submit" id="sub_form3" name="sub_form3" value="Submit" />
+      </div>
+      <div id="form3_aftersubmit" style="display: none;">
+        <h2>Email with Recovery code has been send</h2>
+        Enter received code: <input id="form3_code" type="text" name="code" /><br />
+        Enter your new password:<input type="password" id="sub_form3_password" placeholder="Enter password">
+        Enter your new password again:<input type="password" id="sub_form3_password_again"
+          placeholder="Enter password again">
+        <button onclick="checkPasswords()">Submit</button>
+      </div>
     </div>
+    <button id="continuse_casual_btn">Continue casual</button>
+  </div>
+
+  <button id="log_out_btn" class="loginclass"> LogOut </button>
+  <button id="sql_load_save_btn" class="loginclass"> Load/Save </button>
+  <div id="form4">
+    <div id="addnewCanvas">
+      Add new Canvas: <input type="text" id="form4_canvas_name">
+      <button onclick="addNewCanvas()">Submit</button>
+    </div>
+    <div id="all_canvases">
+
+    </div>
+    <button onclick="ContinueToDraw()">Continue to draw</button>
+  </div>
 
 
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/mainn.js"></script>
-  </body>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/mainn.js"></script>
+</body>
+
 </html>
-

@@ -32,14 +32,15 @@
 
       //mainly for width
       var pencilBrush = new fabric.PencilBrush(canvas);
-      pencilBrush.color = "#ff0000";
+      pencilBrush.color = "#000000";
       pencilBrush.width = 2;
       canvas.freeDrawingBrush = pencilBrush;
+      canvas.isDrawingMode = true;
       
       //*********************************************************************** Helping variables
 
       // text and drawing color
-      drColor = "#ff0000";
+      drColor = "#000000";
       //backgorund color
       bgColor = "black"
 
@@ -64,28 +65,98 @@
       document.getElementById("jpgButton").addEventListener("click", makeJPG);
       document.getElementById("pngButton").addEventListener("click", makePNG);
       document.getElementById("drawRange").addEventListener("click", changeDraw);
-      document.getElementById("resetButton").addEventListener("click", makeReset);
       document.getElementById("imgButton").addEventListener("click", makeImg);
       document.getElementById("textButton").addEventListener("click", makeText);
+      document.getElementById("bgButton").addEventListener("click", makeBackground);
       document.getElementById("loginButton").addEventListener("click", makeLogin);
 
+      function removeSelectedClass(name) {
+        const leftBar = document.getElementById('leftBar');
+        const children = leftBar.children;
+        for (let i = 0; i < children.length; i++) {
+          children[i].classList.remove('selected');
+        }
+        if(name != "move"){
+          document.getElementById("deleteButtonDiv").classList.remove("shown");
+        }
 
+        if(name != "img"){
+          toPutImg = false;
+        }
+
+        if(name != "text"){
+          toPutText = false;
+        }
+      }
+      
       //login fucntions
       function makeLogin() {
         const loginObject = document.getElementById("loginWindow");
         loginObject.style.display = loginObject.style.display === "none" ? "block" : "none";
       }
       
-     
       //buttons Functions
+      /* DRAW */
       function makeDraw() {
         canvas.isDrawingMode = true;
         canvas.selection = false;
+        document.getElementById("drawButton").classList.add("opened");
+        removeSelectedClass("draw");
+        document.getElementById("drawButton").classList.add("selected");
       }
+
+      maincolor.addEventListener("input", function () {
+        let color = maincolor.value;
+        setPenColor(color);
+      });
+
+      function setPenColor(color){
+        document.getElementById('maincolor').value = color;
+        canvas.freeDrawingBrush.color = color;
+        drColor = color;
+      };
+      /* DRAW */
+
+      /* BACKGROUND  */
+      function makeBackground() {
+        document.getElementById("bgButton").classList.add("opened");
+        removeSelectedClass("bg");
+        document.getElementById("bgButton").classList.add("selected");
+      }
+      
+      bgcolor.addEventListener("input", function () {
+        let color = bgcolor.value;
+        setBgColor(color);
+      });
+
+      function setBgColor(color){
+        document.getElementById('bgcolor').value = color;
+        canvas.backgroundColor = color;
+        canvas.renderAll();
+        bgColor = color;
+        socket.emit('backgroundColorChange', color);
+      };
+      
+      /* BACKGROUND  */
+
+      document.addEventListener("mousedown", function(event) {
+        var drawBtn = document.getElementById("drawButton");
+        if (!drawBtn.contains(event.target)) {
+          drawBtn.classList.remove("opened");
+        }
+
+        var bgBtn = document.getElementById("bgButton");
+        if (!bgBtn.contains(event.target)) {
+          bgBtn.classList.remove("opened");
+        }
+      });
 
       function makeMove() {
         canvas.isDrawingMode = false;
         canvas.selection = true;
+        removeSelectedClass("move");
+        document.getElementById("moveButton").classList.add("selected");
+        document.getElementById("deleteButtonDiv").classList.add("shown");
       }
 
       function makeDel() {
@@ -95,6 +166,8 @@
             canvas.remove(object);
           });
         }
+        document.getElementById("delButton").classList.add("selected");
+        canvas.discardActiveObject();
       }
 
       function makeJPG() {
@@ -126,9 +199,7 @@
         pencilBrush.width = parseInt(document.getElementById("drawRange").value);
       }
 
-      function makeReset() {
-        canvas.clear();     
-      }
+      
 
 
       // imgs and text
@@ -146,6 +217,8 @@
         canvas.isDrawingMode = false;
         canvas.discardActiveObject();
         toPutText = true;
+        removeSelectedClass("text");
+        document.getElementById("textButton").classList.add("selected");
       }
       
       function makeImg() {
@@ -153,6 +226,8 @@
         canvas.isDrawingMode = false;
         canvas.discardActiveObject();
         toPutImg = true;
+        removeSelectedClass("img");
+        document.getElementById("imgButton").classList.add("selected");
       }
 
       function generateId() {
@@ -178,7 +253,16 @@
         canvas.add(text);
         canvas.setActiveObject(text);
         text.enterEditing();
-        toPutText = false;
+        // toPutText = false;
+
+        // Add an event listener for the editing:exited event
+        text.on('editing:exited', function () {
+          // Check if the text object has an empty string
+          if (text.text === "") {
+            // Remove the text object from the canvas
+            canvas.remove(text);
+          }
+        });
       }
 
       function addImg(event) {
@@ -218,9 +302,10 @@
       
           reader.readAsDataURL(file);
         });
-        toPutImg = false;
+        // toPutImg = false;
         input.click();
         canvas.__onMouseUp({});
+        canvas.discardActiveObject();
       }
       
  
@@ -281,7 +366,7 @@
         if (!isReceiving) {
           let obj = event.target;
           obj.id = generateId();
-          console.log(JSON.stringify(obj.toJSON()));
+          //console.log(JSON.stringify(obj.toJSON()));
           socket.emit("add", obj.id, JSON.stringify(obj.toJSON()));
         }
       });
@@ -336,6 +421,62 @@
         }
       });
       
+
+      /* CANVAS MODALS */
+
+      var modal = document.getElementById("myModal");
+
+      var btn1 = document.getElementById("resetButton");
+      var btn2 = document.getElementById("lockButton");
+
+      var span = document.getElementsByClassName("close")[0];
+
+      btn1.onclick = function() {
+        modal.style.display = "block";
+        document.getElementById("modal-body").innerHTML = "<p>Modal Body 1.</p>";
+      }
+
+      btn2.onclick = function() {
+        modal.style.display = "block";
+        document.getElementById("modal-body").innerHTML = "<p>Modal Body 2.</p>";
+      }
+
+      span.onclick = function() {
+        modal.style.display = "none";
+      }
+
+      window.onclick = function(event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      }
+
+
+      document.getElementById("lockButton").addEventListener("click", makeLock);
+      document.getElementById("resetButton").addEventListener("click", makeReset);
+      
+      let locked = true;
+      function makeLock(){
+        var image = lockButton.getElementsByTagName("image")[0];
+        if(lockButton.getAttribute("data-value") == "unlock"){
+          socket.emit("unlock");
+          lockButton.setAttribute("data-value", "lock");
+          image.setAttribute("xlink:href", "./assets/lock.svg");
+        }
+        else if (lockButton.getAttribute("data-value") == "lock") {
+          socket.emit("lock");
+          lockButton.setAttribute("data-value", "unlock");
+          image.setAttribute("xlink:href", "./assets/unlock.svg");
+        } 
+      };
+      
+      function makeReset() {
+        canvas.clear();  
+      }
+
+      /* CANVAS MODALS */
+
+
       
       //*********************************************************************** Helping Functions
 
@@ -513,20 +654,7 @@
         console.log(message);
       });
 
-      colorForBackground.addEventListener("click", function () {
-        let color = document.getElementById("maincolor").value;
-        canvas.backgroundColor = color;
-        canvas.renderAll();
-        bgColor = color;
-        socket.emit('backgroundColorChange', color);
-        
-      });
-
-      colorForPencil.addEventListener("click", function () {
-        let color = document.getElementById("maincolor").value;
-        canvas.freeDrawingBrush.color = color;
-        drColor = color;
-      });
+      
 
 
 
@@ -594,29 +722,7 @@
       continuse_casual_btn.addEventListener("click", function () {
         let loginwindow = document.getElementById("loginWindow");
         loginwindow.style.display = "none";
-      });
-
-      let lockBtn = document.getElementById("lockButton");
-      let locked = true;
-
-      lockBtn.addEventListener("click", function () {
-
-        if (lockBtn.innerText == "UNLOCK") {
-          socket.emit("unlock");
-          lockBtn.innerText = "LOCK";
-          lockBtn.style.backgroundColor = "red";
-        }
-        else if (lockBtn.innerText == "LOCK") {
-          socket.emit("lock");
-          lockBtn.innerText = "UNLOCK";
-          lockBtn.style.backgroundColor = "blue";
-        }
- 
-      });
-
-
-
-      
+      });     
   
 
 
@@ -731,4 +837,8 @@
       isReceiving = false;
     });
 
-   
+
+
+    //odstranit nakoniec
+    let loginwindow = document.getElementById("loginWindow");
+    loginwindow.style.display = "none";
