@@ -1,0 +1,141 @@
+body {
+  margin: 0;
+}
+
+#drawButton {
+  position: absolute;
+  top: 10px;
+  left: 0px;
+}
+#moveButton {
+  position: absolute;
+  top: 10px;
+  left: 100px;
+}
+#delButton {
+  position: absolute;
+  top: 10px;
+  left: 200px;
+}
+#jpgButton {
+  position: absolute;
+  top: 10px;
+  left: 300px;
+}
+#pngButton {
+  position: absolute;
+  top: 10px;
+  left: 400px;
+}
+#drawRange {
+  position: absolute;
+  top: 10px;
+  left: 500px;
+}
+#resetButton {
+  position: absolute;
+  top: 10px;
+  left: 600px;
+}
+#imgButton {
+  position: absolute;
+  top: 10px;
+  left: 700px;
+}
+#textButton {
+  position: absolute;
+  top: 10px;
+  left: 800px;
+}
+
+#lockButton{
+  position: absolute;
+  top: 10px;
+  left: 900px;
+}
+
+#colorForBackground{
+  position: absolute;
+  top: 10px;
+  left: 1000px;
+}
+
+#colorForPencil{
+  position: absolute;
+  top: 10px;
+  left: 1200px;
+}
+
+#maincolor{
+  position: absolute;
+  top: 10px;
+  left: 1100px;
+}
+
+#loginButton {
+  position: absolute;
+  top: 75px;
+  left: 0px;
+}
+
+#log_out_btn {
+  position: absolute;
+  top: 75px;
+  left: 100px;
+}
+
+#sql_load_save_btn {
+  position: absolute;
+  top: 75px;
+  left: 200px;
+}
+
+#form4
+{
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%);
+  width: 30%;
+  height: 60%;
+  z-index: 99;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  background-color: white;
+  display: none;
+}
+
+
+#loginWindow {
+  position: absolute;
+  left: 50%;
+  top: 20%;
+  transform: translate(-50%);
+  width: 30%;
+  height: 60%;
+  z-index: 99;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  background-color: white;
+  
+}
+
+.info {
+  border: 2px solid black;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  text-align: center;
+  margin: 5px;
+  padding: 5px;
+}
+
+.loginclass
+{
+  display: none;
+}
+
+.casualclass
+{
+  display: block;
+}

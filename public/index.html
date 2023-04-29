@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Canvas and Buttons</title>
+    <!-- Import the Fabric.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+   
+    <canvas id="canvas"></canvas>
+    
+    <button id="drawButton">Draw</button>
+    <button id="moveButton">Move</button>
+    <button id="delButton">Del</button>
+    <button id="jpgButton">JPG</button>
+    <button id="pngButton">PNG</button>
+
+    <input type="range" id="drawRange" min="2" max="50" step="2" value="2">
+
+    <button id="resetButton">Reset</button>
+    <button id="imgButton"> IMG </button>
+    <button id="textButton"> TEXT </button>
+    
+    <button id="lockButton"> LOCK </button>
+
+    
+    <input id="maincolor" type="color" name="" >
+    <button id="colorForBackground">Background</button>
+    <button id="colorForPencil">Pencil</button>
+   
+
+
+    <button id="loginButton" class="casualclass">Login</button>
+    
+    <div id="loginWindow"  class="casualclass">
+      <h1>Welcome</h1>
+      <div id="form_container">
+
+        <div id="form1" class="info" style="display: block;">
+          Email: <input  id="form1_email"  type="text" name="email" /><br />
+          Password: <input  id="form1_password" type="password" name="password" /><br />
+          <input type="submit" id="sub_form1" name="sub_form1" value="Submit" />
+        </div>
+
+
+        <div id="form2" class="info" style="display: none;">
+          Email: <input id="form2_email"  type="text" name="email" /><br />
+          Password: <input id="form2_password"  type="password" name="password" /><br />
+          Confirm Password: <input id="form2_password_again"  type="password" name="confirm_password" /><br />
+          <input type="submit" id="sub_form2" name="sub_form2" value="Submit" />
+        </div>
+
+        <button id="log_sign_btn">Sign Up / Log In</button>
+
+        <button id="forgot">Forgot the Password?</button>
+        <button id="activateaccount">Activate the acoound</button>
+
+        <div id="form2_aftersubmit" style="display: none;">
+          <h2>Put code that has been send has been send</h2>
+          Email: <input id="form2_code_email"  type="text" name="email" /><br />
+          Enter received code: <input id="form2_code"  type="text" name="code" /><br />
+          <button onclick="checkCode()">Submit</button>
+        </div>
+
+        <div id="form3" class="info" style="display: none;">
+          Email: <input id="form3_email"  type="text" name="email" /><br />
+          <input type="submit" id="sub_form3" name="sub_form3" value="Submit" />
+        </div>
+        <div id="form3_aftersubmit" style="display: none;">
+          <h2>Email with Recovery code has been send</h2>
+          Enter received code: <input id="form3_code"  type="text" name="code" /><br />
+          Enter your new password:<input type="password" id="sub_form3_password" placeholder="Enter password">
+          Enter your new password again:<input type="password" id="sub_form3_password_again" placeholder="Enter password again">
+          <button onclick="checkPasswords()">Submit</button>
+        </div>
+      </div>
+      <button id="continuse_casual_btn">Continue casual</button>
+    </div>
+
+    <button id="log_out_btn" class="loginclass"> LogOut </button>
+    <button id="sql_load_save_btn" class="loginclass"> Load/Save </button>
+    <div id="form4">
+      <div id="addnewCanvas">
+        Add new Canvas: <input type="text" id="form4_canvas_name">
+        <button onclick="addNewCanvas()">Submit</button>
+      </div>
+      <div id="all_canvases">
+          
+      </div>
+      <button onclick="ContinueToDraw()">Continue to draw</button>
+    </div>
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/mainn.js"></script>
+  </body>
+</html>
+
