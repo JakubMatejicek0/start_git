@@ -373,6 +373,7 @@
 
       var canvasModal = document.getElementById("theModal");
       var mainModal = document.getElementById("mainModalDiv");
+      var loadSaveModal = document.getElementById("loadSaveModal");
 
       window.onclick = function(event) {
         if (event.target == canvasModal) {
@@ -380,6 +381,9 @@
         }
         if (event.target == mainModal) {
           closeMainModal();
+        }
+        if (event.target == loadSaveModal) {
+          closeLoadSaveModal();
         }
       }
 
@@ -783,16 +787,16 @@
 
 
 
-      function ContinueToDraw() {
-        let form4 = document.getElementById("form4");
-        form4.style.display = "none";
+      function closeLoadSaveModal() {
+        loadSaveModal.classList.remove("shown");
       }
 
-      loadSaveButton.addEventListener("click", function () {
-        let form4 = document.getElementById("form4");
-        form4.style.display = "block";
+      document.getElementById("loadSaveButton").addEventListener("click", openLoadSaveModal);
+
+      function openLoadSaveModal(){
+        loadSaveModal.classList.add("shown");
         socket.emit('getCanvasIDs', localStorage.getItem('login_code'));
-      });
+      };
       
       const receivedCanvasIDs = [];
 
@@ -806,7 +810,7 @@
       
 
       function addNewCanvas() {
-        const canvasName = document.getElementById('form4_canvas_name').value;
+        var canvasName = document.getElementById('loadSaveForm_canvas_name').value;
         if (canvasName.trim() === '') {
           toast('Please enter a name for the new canvas.');
           return;
@@ -820,6 +824,8 @@
           login_code: login_code,
           canvas_name: canvasName,
         });
+
+        document.getElementById('loadSaveForm_canvas_name').value = "";
       
         canvasObjects.forEach(object => {
           socket.emit('newCanvasObject', {
@@ -835,33 +841,57 @@
       function displayCanvasIDs(canvasIDs) {
         const canvasesContainer = document.getElementById('all_canvases');
         canvasesContainer.innerHTML = ''; 
-      
         canvasIDs.forEach((canvas) => {
           const canvasDiv = document.createElement('div');
           canvasDiv.classList.add('canvas-item');
       
-          const canvasName = document.createElement('h3');
+          const canvasName = document.createElement('div');
           canvasName.innerText = canvas.name;
           canvasDiv.appendChild(canvasName);
+
+          const canvasDate = document.createElement('div');
+          var prettyDate = getDateAndTime(canvas.created_at)
+          canvasDate.innerText = prettyDate;
+          canvasDiv.appendChild(canvasDate);
       
+          
+          const buttonsDiv = document.createElement('div');
+          buttonsDiv.classList.add('buttonsDiv');
+
           const deleteButton = document.createElement('button');
           deleteButton.innerText = 'Delete';
           deleteButton.addEventListener('click', () => {
             deleteCanvas(canvas.canvas_id, canvasDiv);
           });
-          canvasDiv.appendChild(deleteButton);
+          buttonsDiv.appendChild(deleteButton);
       
           const loadButton = document.createElement('button');
           loadButton.innerText = 'Load';
           loadButton.addEventListener('click', () => {
             loadCanvas(canvas.canvas_id);
           });
-          canvasDiv.appendChild(loadButton);
+          buttonsDiv.appendChild(loadButton);
+
+          canvasDiv.appendChild(buttonsDiv);
       
           canvasesContainer.appendChild(canvasDiv);
         });
       }
       
+      function getDateAndTime(dateString) {
+        const date = new Date(dateString);
+      
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+      
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        const seconds = String(date.getSeconds()).padStart(2, '0');
+      
+        return `${hours}:${minutes}:${seconds} ${day}.${month}.${year}`;
+      }
+
       function deleteCanvas(canvasId, canvasDiv) {
         socket.emit('deleteCanvas', canvasId, localStorage.getItem('login_code') );
         canvasDiv.remove();

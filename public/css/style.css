@@ -243,7 +243,7 @@ input[type=range]:focus::-ms-fill-upper {
     padding: 20px;
     border: none;
     width: 32%;
-    height: 30%;
+    height: 25%;
     border-radius: 10px;
 }
 
@@ -305,113 +305,6 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 /* CANVAS MODALS */
-
-
-/* 
-#drawButton {
-  position: absolute;
-  top: 10px;
-  left: 0px;
-}
-#moveButton {
-  position: absolute;
-  top: 10px;
-  left: 100px;
-}
-#delButton {
-  position: absolute;
-  top: 10px;
-  left: 200px;
-}
-#jpgButton {
-  position: absolute;
-  top: 10px;
-  left: 300px;
-}
-#pngButton {
-  position: absolute;
-  top: 10px;
-  left: 400px;
-}
-#drawRange {
-  position: absolute;
-  top: 10px;
-  left: 500px;
-}
-#resetButton {
-  position: absolute;
-  top: 10px;
-  left: 600px;
-}
-#imgButton {
-  position: absolute;
-  top: 10px;
-  left: 700px;
-}
-#textButton {
-  position: absolute;
-  top: 10px;
-  left: 800px;
-}
-
-#lockButton{
-  position: absolute;
-  top: 10px;
-  left: 900px;
-}
-
-#colorForBackground{
-  position: absolute;
-  top: 10px;
-  left: 1000px;
-}
-
-#colorForPencil{
-  position: absolute;
-  top: 10px;
-  left: 1200px;
-}
-
-#maincolor{
-  position: absolute;
-  top: 10px;
-  left: 1100px;
-} */
-
-/* 
-#openMainModalButton {
-  position: absolute;
-  top: 75px;
-  right: 0px;
-} */
-
-/* #logoutButton {
-  position: absolute;
-  top: 75px;
-  left: 100px;
-}
-
-#loadSaveButton {
-  position: absolute;
-  top: 75px;
-  left: 200px;
-} */
-
-#form4
-{
-  position: absolute;
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%);
-  width: 30%;
-  height: 60%;
-  z-index: 99;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  background-color: white;
-  display: none;
-}
 
 
 /* MAIN MODAL */
@@ -536,25 +429,113 @@ input[type=range]:focus::-ms-fill-upper {
   display: none;
 }
 
-
-
 /* MAIN MODAL */
 
-#mainModalDiv {
-  /* position: absolute;
-  left: 50%;
-  top: 20%;
-  transform: translate(-50%);
-  width: 30%;
-  height: 60%;
-  z-index: 99;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-  background-color: white;
-   */
+
+/* LOAD SAVE MODAL */
+
+.loadSaveModal {
+  display: none;
+  position: fixed; 
+  z-index: 100; 
+  left: 0;
+  top: 0;
+  width: 100%; 
+  height: 100%; 
+  overflow: hidden; 
+  background-color: rgba(0,0,0,0.4); 
 }
 
+.loadSaveModal.shown{
+  display: block;
+}
+
+.loadSaveModal-content {
+  background-color: #fefefe;
+  margin: 7% auto;
+  border: none;
+  width: 40%;
+  height: 50%;
+  border-radius: 10px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  padding-block: 20px;
+}
+
+.loadSaveModalBody{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loadSaveModalBody .addnewCanvas{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  padding-block: 10px;
+  margin-bottom: 15px;
+}
+
+.loadSaveModalBody .addnewCanvas span{
+  font-size: 1.3rem;
+}
+
+.loadSaveModalBody input, .loadSaveModalBody input:focus{
+  font-size: 1.2rem;
+  outline:none!important;
+  border: none;
+  border-bottom: 1px black solid;
+  width: 40%;
+}
+
+.loadSaveModalBody button {
+  cursor: pointer;
+  background-color: #00a499;
+  color: white;
+  border-radius: 10px;
+  padding: 7px 18px;
+  border: none;
+  font-size: 1.1rem;
+}
+.loadSaveModalBody button:hover{
+  background-color: #1e2838;
+}
+
+
+.loadSaveModalBody .all_canvases{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  row-gap: 15px;
+}
+
+.loadSaveModalBody .all_canvases .canvas-item{
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.loadSaveModalBody .all_canvases .canvas-item > div:first-child{
+  width: 30%;
+}
+
+.loadSaveModalBody .all_canvases .canvas-item .buttonsDiv{
+  display: flex;
+  column-gap: 5px;
+}
+
+
+/* LOAD SAVE MODAL */
+
+
+
+/* TOAST */
 
 #toast {
   visibility: hidden;
@@ -576,3 +557,5 @@ input[type=range]:focus::-ms-fill-upper {
   visibility: visible;
   opacity: 1;
 }
+
+/* TOAST */
