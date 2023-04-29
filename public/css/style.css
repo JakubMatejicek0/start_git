@@ -122,15 +122,23 @@ input[type=range]:focus::-ms-fill-upper {
   border-radius: 10px;
   display: flex;
   justify-content: center;
+  align-items: center;
   border: none;
+  width: 37px;
+  height: 37px;
 }
 
-.leftBar .theBtn.icon svg{
+.leftBar .theBtn svg{
   width: 27px;
   height: 27px;
 }
-.leftBar .theBtn.icon svg image{
+.leftBar .theBtn svg.exportSvg{
+  width: 24px;
+  height: 24px;
+}
+.leftBar .theBtn svg image{
   width: 100%;
+  height: 100%;
 }
 
 .leftBar .theBtn:hover, .leftBar .drawBtn.opened, .leftBar .theBtn.selected{
@@ -138,7 +146,7 @@ input[type=range]:focus::-ms-fill-upper {
   color: white;
   background-color: #00a499;
 }
-.leftBar .theBtn.icon:hover svg image, .leftBar .drawBtn.opened svg image, .leftBar .theBtn.selected svg image{
+.leftBar .theBtn:hover svg image, .leftBar .drawBtn.opened svg image, .leftBar .theBtn.selected svg image{
   filter: invert(1);
 }
 
@@ -179,7 +187,7 @@ input[type=range]:focus::-ms-fill-upper {
 .deleteDiv{
   position: absolute;
   left: 80px;
-  top: 3rem;
+  top: 52px;
   z-index: 50;
   transition: 0.2s all ease;
   opacity: 0;
@@ -201,8 +209,8 @@ input[type=range]:focus::-ms-fill-upper {
 }
 
 .deleteDiv .theDelBtn svg{
-  width: 27px;
-  height: 27px;
+  width: 30px;
+  height: 30px;
 }
 .deleteDiv .theDelBtn svg image{
   width: 100%;
@@ -252,31 +260,34 @@ input[type=range]:focus::-ms-fill-upper {
   text-decoration: none;
   cursor: pointer;
 }
-.modalReset{
+.modalBody{
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   width: 100%;
 }
-.modalReset .mainTitle{
+.modalBody .mainTitle{
   display: inline-block;
+  width: 100%;
   font-size: 1.6rem;
   margin-bottom: 0.7rem;
 }
-.modalReset .littleTitle{
+.modalBody .littleTitle{
   display: inline-block;
+  width: 100%;
   font-size: 1.2rem;
   margin-bottom: 2rem;
 }
-.modalReset .buttons{
+.modalBody .buttons{
   display: flex; 
   align-items: center;
   justify-content: center;
   column-gap: 2rem;
 }
 
-.modalReset .buttons button{
+.modalBody .buttons button{
+  cursor: pointer;
   background-color: #00a499;
   color: white;
   border-radius: 10px;
@@ -285,7 +296,7 @@ input[type=range]:focus::-ms-fill-upper {
   font-size: 1.1rem;
 
 }
-.modalReset .buttons button:hover{
+.modalBody .buttons button:hover{
   background-color: #1e2838;
 }
 
@@ -363,11 +374,12 @@ input[type=range]:focus::-ms-fill-upper {
   left: 1100px;
 } */
 
+/* 
 #loginButton {
   position: absolute;
   top: 75px;
   right: 0px;
-}
+} */
 
 #log_out_btn {
   position: absolute;

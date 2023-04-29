@@ -21,13 +21,13 @@
     </button>
   </div>
   <div class="leftBar" id="leftBar">
-    <button class="theBtn icon " id="moveButton">
+    <button class="theBtn" id="moveButton">
       <svg>
         <image xlink:href="./assets/move.svg" />
       </svg>
     </button>
 
-    <button class="theBtn icon drawBtn selected" id="drawButton">
+    <button class="theBtn drawBtn selected" id="drawButton">
       <svg>
         <image xlink:href="./assets/draw.svg" />
       </svg>
@@ -48,18 +48,18 @@
       </div>
     </button>
 
-    <button class="theBtn icon" id="imgButton">
+    <button class="theBtn" id="imgButton">
       <svg>
         <image xlink:href="./assets/image.svg" />
       </svg>
     </button>
-    <button class="theBtn icon" id="textButton">
+    <button class="theBtn" id="textButton">
       <svg>
         <image xlink:href="./assets/text.svg" />
       </svg>
     </button>
 
-    <button class="theBtn icon backgroundBtn" id="bgButton">
+    <button class="theBtn backgroundBtn" id="bgButton">
       <svg>
         <image xlink:href="./assets/drop.svg" />
       </svg>
@@ -76,42 +76,63 @@
     </button>
 
     <hr style="width: 100%; height: 2px;">
-    <button class=" theBtn icon" id="resetButton">
+    <button class=" theBtn" id="resetButton">
       <svg>
         <image xlink:href="./assets/reset.svg" />
       </svg>
     </button>
 
-    <button class="theBtn icon" id="lockButton" data-value="unlock">
+    <button class="theBtn" id="lockButton" data-state="unlock">
       <svg>
         <image xlink:href="./assets/unlock.svg" />
+      </svg>
+    </button>
+
+
+    <button class="theBtn" id="exportButton">
+      <svg class="exportSvg">
+        <image xlink:href="./assets/export.svg" />
+      </svg>
+    </button>
+
+    <hr style="width: 100%; height: 2px;">
+
+    <button class="theBtn casualclass" id="loginButton">
+      <svg>
+        <image xlink:href="./assets/user.svg" />
+      </svg>
+    </button>
+
+    <button class="theBtn" id="loadSaveButton">
+      <svg>
+        <image xlink:href="./assets/cloud.svg" />
+      </svg>
+    </button>
+
+    <button class="theBtn" id="logoutButton">
+      <svg>
+        <image xlink:href="./assets/logout.svg" />
       </svg>
     </button>
 
   </div>
 
 
-  <button class="theBtn" id="jpgButton">JPG</button>
-  <button class="theBtn" id="pngButton">PNG</button>
 
-  <button id="loginButton" class="casualclass">Login</button>
-
-  <!-- The modal -->
-  <div id="myModal" class="modal" style="display: block;">
-    <!-- Modal content -->
+  <div id="myModal" class="modal">
     <div class="modal-content">
       <div class="modal-header">
         <span class="close">&times;</span>
       </div>
-      <div class="modalReset">
+      <div class="modalBody" id="modalBody" data-action="">
         <div>
-          <span class="mainTitle">Do you really wish to reset your Whiteboard?</span>
-          <span class="littleTitle">All data will be pernamently lost</span>
+          <span class="mainTitle" id="mainTitle"></span>
+          <span class="littleTitle" id="littleTitle"></span>
         </div>
         <div class="buttons">
-          <button>Cancel</button>
+          <button id="cancelButton">Cancel</button>
 
-          <button>Confirm</button>
+          <button id="confirmButton">Confirm</button>
         </div>
       </div>
     </div>
