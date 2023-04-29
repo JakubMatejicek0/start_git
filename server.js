@@ -551,12 +551,12 @@ function getUserCanvasIDs(loginCode, socket) {
   const connection = createMySQLConnection();
   connection.connect();
 
-  const sql = 'SELECT canvas_id, name FROM canvas WHERE person_id = ?';
+  const sql = 'SELECT canvas_id, name, created_at FROM canvas WHERE person_id = ?';
   connection.query(sql, [user_id], (err, results, fields) => {
     if (err) {
       console.error(err.message);
     } else {
-      socket.emit('orderedCanvasIDs', results.map(result => ({canvas_id: result.canvas_id, name: result.name})));
+      socket.emit('orderedCanvasIDs', results.map(result => ({canvas_id: result.canvas_id, name: result.name, created_at: result.created_at})));
     }
     connection.end();
   });
