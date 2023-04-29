@@ -490,8 +490,8 @@ io.on('connection', function (socket) {
       if (err) {
         console.error(err.message);
         connection.end();
-      } else if (!results.length) {
-        socket.emit('change_confirmed', 'No user found with this email and reset code.');
+      } else if (results.length < 1) {
+        socket.emit('change_denied', 'No user found with this email and reset code.');
         connection.end();
       } else {
         const updatePasswordSql = 'UPDATE person SET password = ?, reset_code = NULL WHERE email = ? AND reset_code = ?';

@@ -32,14 +32,15 @@
 
       //mainly for width
       var pencilBrush = new fabric.PencilBrush(canvas);
-      pencilBrush.color = "#ff0000";
+      pencilBrush.color = "#000000";
       pencilBrush.width = 2;
       canvas.freeDrawingBrush = pencilBrush;
+      canvas.isDrawingMode = true;
       
       //*********************************************************************** Helping variables
 
       // text and drawing color
-      drColor = "#ff0000";
+      drColor = "#000000";
       //backgorund color
       bgColor = "black"
 
@@ -61,31 +62,92 @@
       document.getElementById("drawButton").addEventListener("click", makeDraw);
       document.getElementById("moveButton").addEventListener("click", makeMove);
       document.getElementById("delButton").addEventListener("click", makeDel);
-      document.getElementById("jpgButton").addEventListener("click", makeJPG);
-      document.getElementById("pngButton").addEventListener("click", makePNG);
       document.getElementById("drawRange").addEventListener("click", changeDraw);
-      document.getElementById("resetButton").addEventListener("click", makeReset);
       document.getElementById("imgButton").addEventListener("click", makeImg);
       document.getElementById("textButton").addEventListener("click", makeText);
-      document.getElementById("loginButton").addEventListener("click", makeLogin);
+      document.getElementById("bgButton").addEventListener("click", makeBackground);
 
+      function removeSelectedClass(name) {
+        const leftBar = document.getElementById('leftBar');
+        const children = leftBar.children;
+        for (let i = 0; i < children.length; i++) {
+          children[i].classList.remove('selected');
+        }
+        if(name != "move"){
+          document.getElementById("deleteButtonDiv").classList.remove("shown");
+        }
 
-      //login fucntions
-      function makeLogin() {
-        const loginObject = document.getElementById("loginWindow");
-        loginObject.style.display = loginObject.style.display === "none" ? "block" : "none";
+        if(name != "img"){
+          toPutImg = false;
+        }
+
+        if(name != "text"){
+          toPutText = false;
+        }
       }
       
-     
       //buttons Functions
+      /* DRAW */
       function makeDraw() {
         canvas.isDrawingMode = true;
         canvas.selection = false;
+        document.getElementById("drawButton").classList.add("opened");
+        removeSelectedClass("draw");
+        document.getElementById("drawButton").classList.add("selected");
       }
+
+      maincolor.addEventListener("input", function () {
+        let color = maincolor.value;
+        setPenColor(color);
+      });
+
+      function setPenColor(color){
+        document.getElementById('maincolor').value = color;
+        canvas.freeDrawingBrush.color = color;
+        drColor = color;
+      };
+      /* DRAW */
+
+      /* BACKGROUND  */
+      function makeBackground() {
+        document.getElementById("bgButton").classList.add("opened");
+        removeSelectedClass("bg");
+        document.getElementById("bgButton").classList.add("selected");
+      }
+      
+      bgcolor.addEventListener("input", function () {
+        let color = bgcolor.value;
+        setBgColor(color);
+      });
+
+      function setBgColor(color){
+        document.getElementById('bgcolor').value = color;
+        canvas.backgroundColor = color;
+        canvas.renderAll();
+        bgColor = color;
+        socket.emit('backgroundColorChange', color);
+      };
+      
+      /* BACKGROUND  */
+
+      document.addEventListener("mousedown", function(event) {
+        var drawBtn = document.getElementById("drawButton");
+        if (!drawBtn.contains(event.target)) {
+          drawBtn.classList.remove("opened");
+        }
+
+        var bgBtn = document.getElementById("bgButton");
+        if (!bgBtn.contains(event.target)) {
+          bgBtn.classList.remove("opened");
+        }
+      });
 
       function makeMove() {
         canvas.isDrawingMode = false;
         canvas.selection = true;
+        removeSelectedClass("move");
+        document.getElementById("moveButton").classList.add("selected");
+        document.getElementById("deleteButtonDiv").classList.add("shown");
       }
 
       function makeDel() {
@@ -95,40 +157,15 @@
             canvas.remove(object);
           });
         }
-      }
-
-      function makeJPG() {
-        var canvas_string = canvas.toDataURL("image/jpg");
-        var link = document.createElement("a");
-        link.download = "image.jpg";
-        link.href = canvas_string;
-        link.click();    
-      }
-
-      function makePNG() {
-        var originalBackgroundColor = canvas.backgroundColor;
-        canvas.backgroundColor = null; // Set the background to transparent
-        canvas.renderAll(); // Re-render the canvas to reflect the change
-    
-        var canvas_string = canvas.toDataURL("image/png");
-    
-        var link = document.createElement("a");
-        link.download = "image.png";
-        link.href = canvas_string;
-        link.click();
-    
-        canvas.backgroundColor = originalBackgroundColor; // Restore the original background color
-        canvas.renderAll(); // Re-render the canvas again to reflect the change
-    }
-    
+        document.getElementById("delButton").classList.add("selected");
+        canvas.discardActiveObject();
+      }    
 
       function changeDraw() {
         pencilBrush.width = parseInt(document.getElementById("drawRange").value);
       }
 
-      function makeReset() {
-        canvas.clear();     
-      }
+      
 
 
       // imgs and text
@@ -146,6 +183,8 @@
         canvas.isDrawingMode = false;
         canvas.discardActiveObject();
         toPutText = true;
+        removeSelectedClass("text");
+        document.getElementById("textButton").classList.add("selected");
       }
       
       function makeImg() {
@@ -153,6 +192,8 @@
         canvas.isDrawingMode = false;
         canvas.discardActiveObject();
         toPutImg = true;
+        removeSelectedClass("img");
+        document.getElementById("imgButton").classList.add("selected");
       }
 
       function generateId() {
@@ -178,7 +219,16 @@
         canvas.add(text);
         canvas.setActiveObject(text);
         text.enterEditing();
-        toPutText = false;
+        // toPutText = false;
+
+        // Add an event listener for the editing:exited event
+        text.on('editing:exited', function () {
+          // Check if the text object has an empty string
+          if (text.text === "") {
+            // Remove the text object from the canvas
+            canvas.remove(text);
+          }
+        });
       }
 
       function addImg(event) {
@@ -218,9 +268,10 @@
       
           reader.readAsDataURL(file);
         });
-        toPutImg = false;
+        // toPutImg = false;
         input.click();
         canvas.__onMouseUp({});
+        canvas.discardActiveObject();
       }
       
  
@@ -281,7 +332,7 @@
         if (!isReceiving) {
           let obj = event.target;
           obj.id = generateId();
-          console.log(JSON.stringify(obj.toJSON()));
+          //console.log(JSON.stringify(obj.toJSON()));
           socket.emit("add", obj.id, JSON.stringify(obj.toJSON()));
         }
       });
@@ -336,32 +387,206 @@
         }
       });
       
+
+      /* CANVAS MODALS */
+
+      var canvasModal = document.getElementById("theModal");
+      var mainModal = document.getElementById("mainModalDiv");
+
+      window.onclick = function(event) {
+        if (event.target == canvasModal) {
+          closeModal();
+        }
+        if (event.target == mainModal) {
+          closeMainModal();
+        }
+      }
+
+      var span = document.getElementsByClassName("close")[0];
+      document.getElementById("cancelButton").addEventListener("click", tryCloseModal);
+
+      span.onclick = function() {
+        closeModal();
+      }
+
+      function tryCloseModal(){
+        var action = modalBody.getAttribute("data-action");
+        if(action == "export"){
+          makePNG();
+        }
+        closeModal();
+      }
+      function closeModal(){
+        canvasModal.style.display = "none";
+      }
+
+      document.getElementById("resetButton").addEventListener("click", showResetModal);
+      document.getElementById("lockButton").addEventListener("click", showLockModal);
+      document.getElementById("exportButton").addEventListener("click", showExportModal);
+
+      var mainTitleSpan = document.getElementById("mainTitle");
+      var littleTitleSpan = document.getElementById("littleTitle");
+
+
+      function showResetModal() {
+        canvasModal.style.display = "block";
+        modalBody.setAttribute("data-action", "reset");
+        mainTitleSpan.innerHTML = "Do you really wish to reset your Whiteboard?";
+        littleTitleSpan.innerHTML = "All data will be pernamently lost";
+        confirmButton.innerHTML = "Confirm";
+        cancelButton.innerHTML = "Cancel";
+      }
+
+      function showLockModal() {
+        canvasModal.style.display = "block";
+        modalBody.setAttribute("data-action", "lock");
+        confirmButton.innerHTML = "Confirm";
+        cancelButton.innerHTML = "Cancel";
+        if(lockButton.getAttribute("data-state") == "unlock"){
+          mainTitleSpan.innerHTML = "Do you wish to lock your Whiteboard?";
+          littleTitleSpan.innerHTML = "Other clients won't be able to join this Whiteboard";
+        }
+        else if (lockButton.getAttribute("data-state") == "lock") {
+          mainTitleSpan.innerHTML = "Do you wish to unlock your Whiteboard?";
+          littleTitleSpan.innerHTML = "Other clients will now be able to join this Whiteboard";
+        } 
+      }
+
+      function showExportModal(){
+        canvasModal.style.display = "block";
+        mainTitleSpan.innerHTML = "Export your Whiteboard";
+        littleTitleSpan.innerHTML = "Choose from formats below";
+        confirmButton.innerHTML = "JPG";
+        cancelButton.innerHTML = "PNG";
+        modalBody.setAttribute("data-action", "export");
+      }
+
+      document.getElementById("confirmButton").addEventListener("click", makeAction);
+      
+      function makeAction(){
+        var action = modalBody.getAttribute("data-action");
+        if(action == "lock"){
+          makeLock();
+          closeModal();
+        }
+        else if(action == "reset"){
+          makeReset(); 
+          closeModal();
+        }
+        else if(action == "export"){
+          makeJPG();
+          closeModal();
+        }
+      }
+
+      function makeLock(){
+        var image = lockButton.getElementsByTagName("image")[0];
+        if(lockButton.getAttribute("data-state") == "lock"){
+          socket.emit("unlock");
+          lockButton.setAttribute("data-state", "unlock");
+          image.setAttribute("xlink:href", "./assets/unlock.svg");
+        }
+        else if (lockButton.getAttribute("data-state") == "unlock") {
+          socket.emit("lock");
+          lockButton.setAttribute("data-state", "lock");
+          image.setAttribute("xlink:href", "./assets/lock.svg");
+        } 
+      };
+      
+      function makeReset() {
+        canvas.clear();  
+      }
+
+      function makeJPG() {
+        var canvas_string = canvas.toDataURL("image/jpg");
+        var link = document.createElement("a");
+        link.download = "image.jpg";
+        link.href = canvas_string;
+        link.click();    
+      }
+
+      function makePNG() {
+        var originalBackgroundColor = canvas.backgroundColor;
+        canvas.backgroundColor = null; // Set the background to transparent
+        canvas.renderAll(); // Re-render the canvas to reflect the change
+    
+        var canvas_string = canvas.toDataURL("image/png");
+    
+        var link = document.createElement("a");
+        link.download = "image.png";
+        link.href = canvas_string;
+        link.click();
+    
+        canvas.backgroundColor = originalBackgroundColor; // Restore the original background color
+        canvas.renderAll(); // Re-render the canvas again to reflect the change
+      }
+
+      /* CANVAS MODALS */
+
+
+      /* MAIN MODAL */
+      
+      document.getElementById("openMainModalButton").addEventListener("click", openMainModal);
+
+      
+  
+      function openMainModal() {
+        changeCurrent("login");
+        mainModalDiv.classList.add("shown");
+      }
+
+      function closeMainModal(){
+        recoveryForm.style.display="flex";
+        recoveryForm_second.style.display= "none";
+        mainModalDiv.classList.remove("shown");
+      }
+      
+      
+
+      function changeCurrent(name){
+        const children = mainModalBody.children;
+        const childrenHeader = mainModalHeader.children;
+        for (let i = 0; i < children.length; i++) {
+          children[i].classList.remove('current');
+          childrenHeader[i].classList.remove('activated');
+        }
+        if(name == "login"){
+          loginForm.classList.add('current');
+          selectLogin.classList.add('activated');
+        }
+        if(name == "register"){
+          registerForm.classList.add('current');
+          selectRegister.classList.add('activated');
+        }
+        if(name == "activate"){
+          activateForm.classList.add('current');
+          selectActivate.classList.add('activated');
+        }
+        if(name == "forgot"){
+          recoveryMain.classList.add('current');
+          selectForgot.classList.add('activated');
+        }
+      }
+
+
+      
+      /*  MAIN MODAL */
       
       //*********************************************************************** Helping Functions
 
-      let login_btn = document.getElementById("log_sign_btn");
-      let forgot = document.getElementById("forgot");
-      let form1 = document.getElementById("form1");
-      let form2 = document.getElementById("form2");
-      let form3 = document.getElementById("form3");
+      let loginForm = document.getElementById("loginForm");
+      let registerForm = document.getElementById("registerForm");
+      let recoveryForm = document.getElementById("recoveryForm");
 
-      login_btn.addEventListener("click", function () {
-        form1.style.display = form1.style.display === "none" ? "block" : "none";
-        form2.style.display = form2.style.display === "block" ? "none" : "block";
-      });
-
-      forgot.addEventListener("click", function () {
-        form3.style.display = form3.style.display === "none" ? "block" : "none";
-      }); 
 
       function isValidEmail(email) {
         const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return re.test(email);
       }
       
-      sub_form1.addEventListener("click", function () {
-        let email = document.getElementById("form1_email");
-        let password = document.getElementById("form1_password");
+      sub_loginForm.addEventListener("click", function () {
+        let email = document.getElementById("loginForm_email");
+        let password = document.getElementById("loginForm_password");
       
         if (email.value.trim() !== "" && password.value.trim() !== "") {
           if (isValidEmail(email.value.trim())) {
@@ -372,6 +597,8 @@
       
             let json = JSON.stringify(loginData);
             socket.emit("login", json);
+            loginForm_email.value = "";
+            loginForm_password.value = "";
           } else {
             alert("Please enter a valid email.");
           }
@@ -380,10 +607,10 @@
         }
       });
 
-      sub_form2.addEventListener("click", function () {
-        let email = document.getElementById("form2_email");
-        let password = document.getElementById("form2_password");
-        let password_again = document.getElementById("form2_password_again");
+      sub_registerForm.addEventListener("click", function () {
+        let email = document.getElementById("registerForm_email");
+        let password = document.getElementById("registerForm_password");
+        let password_again = document.getElementById("registerForm_password_again");
 
         
       
@@ -396,9 +623,9 @@
                   password: password.value.trim()
                 };
 
-                document.getElementById("form2_email").value = "";
-                document.getElementById("form2_password").value = "";
-                document.getElementById("form2_password_again").value = "";
+                document.getElementById("registerForm_email").value = "";
+                document.getElementById("registerForm_password").value = "";
+                document.getElementById("registerForm_password_again").value = "";
               
                 let json = JSON.stringify(registrationData);
                 socket.emit("register", json);
@@ -417,8 +644,8 @@
       });
       
       let tmpemail = "";
-      sub_form3.addEventListener("click", function () {
-        let email = document.getElementById("form3_email");
+      sub_recoveryForm.addEventListener("click", function () {
+        let email = document.getElementById("recoveryForm_email");
       
         if (email.value.trim() !== "") {
           if (isValidEmail(email.value.trim())) {
@@ -426,9 +653,13 @@
               email: email.value.trim(),
             };
             tmpemail = email.value.trim();
-            document.getElementById("form3_email").value = "";
+            document.getElementById("recoveryForm_email").value = "";
             let json = JSON.stringify(recoveryData);
             socket.emit("recover_password", json);
+
+            recoveryForm.style.display="none";
+            recoveryForm_second.style.display= "flex";
+
           } else {
             alert("Please enter a valid email.");
           }
@@ -437,6 +668,29 @@
         }
 
       });
+
+      // socket.on('code_send', function(message) {
+      //   let codediv = document.getElementById("recoveryForm_second")
+      //   codediv.style.display =  "block";
+      //   console.log(message);
+      // });
+
+      socket.on('change_confirmed', function(message) {
+       console.log(message);
+       alert("Spravne zmenene heslo");
+       recoveryForm.style.display="flex";
+       recoveryForm_second.style.display= "none";
+       recoveryForm_code.value = "";
+       sub_recoveryForm_password.value = "";
+       sub_recoveryForm_password_again.value = "";
+       changeCurrent("login");
+      });
+
+      socket.on('change_denied', function(message) {
+       console.log(message);
+       alert("Zmena neprebehla spravne");
+      });
+
       
       socket.on('dbresult', function(message) {
         console.log(message);
@@ -445,9 +699,9 @@
 
       function checkPasswords() {
         let email = tmpemail;
-        let codeinput = document.getElementById("form3_code");
-        const password = document.getElementById("sub_form3_password");
-        const passwordAgain = document.getElementById("sub_form3_password_again");
+        let codeinput = document.getElementById("recoveryForm_code");
+        const password = document.getElementById("sub_recoveryForm_password");
+        const passwordAgain = document.getElementById("sub_recoveryForm_password_again");
 
         if (password.value !== passwordAgain.value) {
             alert("Passwords do not match");
@@ -465,68 +719,33 @@
         }
       }
 
-      socket.on('code_send', function(message) {
-        let codediv = document.getElementById("form3_aftersubmit")
-        codediv.style.display =  "block";
-        console.log(message);
-      });
-
-      socket.on('change_confirmed', function(message) {
-       let codediv = document.getElementById("form3_aftersubmit")
-       codediv.style.display =  "none";
-       console.log(message);
-      });
+     
      
       function checkCode() {
-        let email =  document.getElementById("form2_code_email");
-        let codeinput = document.getElementById("form2_code");
+        let email =  document.getElementById("registerForm_code_email");
+        let codeinput = document.getElementById("registerForm_code");
         if (!isValidEmail(email.value.trim())) {
           console.log("Invalid email");
           return;
         }
-      
-
-        
 
         let activateData = {
           email: email.value.trim(),
           codeinput: codeinput.value.trim()
         };
-        document.getElementById("form2_code_email").value = "";
-        document.getElementById("form2_code").value = "";
+        document.getElementById("registerForm_code_email").value = "";
+        document.getElementById("registerForm_code").value = "";
   
         let json = JSON.stringify(activateData);
         socket.emit("activated_account", json);
         
       }
 
-      activateaccount.addEventListener("click", function () {
-        let activatefrom = document.getElementById("form2_aftersubmit")
-        activatefrom.style.display = activatefrom.style.display === "none" ? "block" : "none";
-      });
-      
-      socket.on('dbresult', function(message) {
-        console.log(message);
-      });
-      
       socket.on('active_code_send', function(message) {
-        console.log(message);
+        changeCurrent('activate');
       });
 
-      colorForBackground.addEventListener("click", function () {
-        let color = document.getElementById("maincolor").value;
-        canvas.backgroundColor = color;
-        canvas.renderAll();
-        bgColor = color;
-        socket.emit('backgroundColorChange', color);
-        
-      });
-
-      colorForPencil.addEventListener("click", function () {
-        let color = document.getElementById("maincolor").value;
-        canvas.freeDrawingBrush.color = color;
-        drColor = color;
-      });
+      
 
 
 
@@ -534,7 +753,6 @@
         console.log("Sending code to check");
         socket.emit("islogged", localStorage.getItem('login_code'));
       } 
-
 
       socket.on('user_is_logged', function(message) {
         console.log("User is logged");
@@ -556,6 +774,7 @@
         console.log(message);
         localStorage.setItem("login_code", message);
         loginprivilege();
+        closeMainModal();
       });
 
       function loginprivilege() {
@@ -584,39 +803,12 @@
       }
       
 
-      log_out_btn.addEventListener("click", function () {
+      logoutButton.addEventListener("click", function () {
         console.log("Log out");
         looseloginprivilege();
         socket.emit("logout", localStorage.getItem('login_code'));
         localStorage.removeItem("login_code");
       });
-
-      continuse_casual_btn.addEventListener("click", function () {
-        let loginwindow = document.getElementById("loginWindow");
-        loginwindow.style.display = "none";
-      });
-
-      let lockBtn = document.getElementById("lockButton");
-      let locked = true;
-
-      lockBtn.addEventListener("click", function () {
-
-        if (lockBtn.innerText == "UNLOCK") {
-          socket.emit("unlock");
-          lockBtn.innerText = "LOCK";
-          lockBtn.style.backgroundColor = "red";
-        }
-        else if (lockBtn.innerText == "LOCK") {
-          socket.emit("lock");
-          lockBtn.innerText = "UNLOCK";
-          lockBtn.style.backgroundColor = "blue";
-        }
- 
-      });
-
-
-
-      
   
 
 
@@ -626,7 +818,7 @@
         form4.style.display = "none";
       }
 
-      sql_load_save_btn.addEventListener("click", function () {
+      loadSaveButton.addEventListener("click", function () {
         let form4 = document.getElementById("form4");
         form4.style.display = "block";
         socket.emit('getCanvasIDs', localStorage.getItem('login_code'));
@@ -731,4 +923,3 @@
       isReceiving = false;
     });
 
-   
