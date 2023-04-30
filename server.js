@@ -545,7 +545,8 @@ io.on('connection', function (socket) {
     });
 }
 
-// get ids of existings canvases to logged user
+
+//  get ids of existings canvases to logged user
 function getUserCanvasIDs(loginCode, socket) {
   const user_id = loggedInUsers.get(loginCode).user_id;
   const connection = createMySQLConnection();
