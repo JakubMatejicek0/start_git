@@ -90,8 +90,6 @@ async function sendEmail(to, subject, text) {
   }
 }
 
-
-//url checker
 app.get('/favicon.ico', (req, res) => {
   res.status(204).end();
 });
@@ -103,7 +101,7 @@ app.get('/:code', (req, res) => {
     let tmpc =  getCanvas(req.params.code);
 
     if (tmpc.lock) {
-      res.sendFile('nocanvas.html', { root: path.join(__dirname, 'public/') });
+      res.sendFile('locked.html', { root: path.join(__dirname, 'public/') });
     }
     else
     {
@@ -347,7 +345,7 @@ io.on('connection', function (socket) {
               if (err) {
                 console.error(err.message);
               } else {
-                socket.emit('active_code_send','Code has been sent');
+                socket.emit('active_code_send','Code has been send.');
                 //socket.emit('dbresult', 'User registered successfully.');
                 sendEmail(email, 'Account activation', `Your activation code is: ${active_code}`);
               }
@@ -666,6 +664,7 @@ function deleteCanvasFromDatabase(canvasId) {
       console.error(err.message);
     } else {
       console.log(`Canvas with id ${canvasId} has been deleted.`);
+
     }
     connection.end();
   });
@@ -675,6 +674,7 @@ function deleteCanvasFromDatabase(canvasId) {
 socket.on('deleteCanvas', (canvasId, login_code) => {
 
   if (loggedInUsers.has(login_code)) {
+    socket.emit('deleteSuccess');
     deleteCanvasFromDatabase(canvasId);
   } else {
     console.log("UnLogged user tried to delete canvas");

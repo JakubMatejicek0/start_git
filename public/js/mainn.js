@@ -894,8 +894,12 @@
 
       function deleteCanvas(canvasId, canvasDiv) {
         socket.emit('deleteCanvas', canvasId, localStorage.getItem('login_code') );
-        canvasDiv.remove();
+
+        socket.on('deleteSuccess', (objectData) => {
+          canvasDiv.remove();
+        });
       }
+      
       
       
   
